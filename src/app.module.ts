@@ -3,15 +3,18 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import AuthModule from './modules/auth/auth.module';
-import Users from './entities/user.entity';
+import Users from './modules/user/user.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import configFunction from './config/config';
-import TokenModule from './modules/token/token.module';
+import TokenModule from './providers/token/token.module';
 import { DBConfig } from './config/interface';
 import { APP_GUARD } from '@nestjs/core';
 import JwtAuthGuard from './modules/auth/guards/jwt.guard';
 import JwtStrategy from './modules/auth/strategies/jwt.strategy';
 import UserModule from './modules/user/user.module';
+import Company from './modules/company/company.entity';
+import CompanyUsers from './modules/company/user/company_user.entity';
+import Customers from './modules/company/customer/customer.entity';
 
 @Module({
   imports: [
@@ -34,7 +37,7 @@ import UserModule from './modules/user/user.module';
           port: db.port,
           ssl: db.ssl,
           synchronize: true,
-          entities: [Users]
+          entities: [Users, Company, CompanyUsers, Customers]
         }
       },
     }),

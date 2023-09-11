@@ -25,8 +25,6 @@ class GoogleStrategy extends PassportStrategy(Strategy, "google") {
       avatar: photos[0].value,
     }, 'google')
 
-    console.log(user)
-
     done(null, user);
   }
 }

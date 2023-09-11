@@ -23,6 +23,7 @@ const configuration: ConfigVars = {
   },
   jwt: {
     secret: process.env.JWT_SECRET || 'seKOENVOEINLND234NFI',
+    auth_secret: process.env.JWT_AUTH_SECRET || 'seKOENVOEINLND234ERIV84HR'
   },
   oauth: {
     google: {
@@ -30,6 +31,9 @@ const configuration: ConfigVars = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: process.env.BASE_URL + process.env.GOOGLE_CALLBACK_URL,
     }
+  },
+  frontend: {
+    base_url: process.env.CLIENT_URL || "http://localhost:3000"
   }
 };
 

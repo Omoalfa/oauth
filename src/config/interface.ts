@@ -17,11 +17,15 @@ export interface DBConfig {
 interface ConfigVars {
   database: DBConfig,
   jwt: {
-    secret: string,
+    auth_secret: string,
+    secret: string
   },
   oauth: {
     google: GoogleAuthCredentials,
   },
+  frontend: {
+    base_url: string
+  }
 }
 
 export default ConfigVars;

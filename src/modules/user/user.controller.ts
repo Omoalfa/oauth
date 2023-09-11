@@ -1,9 +1,9 @@
-import { Controller, Get, Req, UseGuards } from "@nestjs/common";
+import { Controller, Get, Param, Req, UseGuards } from "@nestjs/common";
 import UserService from "./user.service";
 import { Request } from "express";
-import Users, { UserRoles } from "src/entities/user.entity";
-import Roles from "src/dtos/roles.decorator";
-import RoleGuard from "../auth/guards/role.guard";
+import Users from "./user.entity";
+import Scopes from "../auth/docorators/scopes.decorator";
+import { AuthRequest } from "@/interface";
 
 @Controller("users")
 class UserController {
@@ -16,11 +16,9 @@ class UserController {
     return req.user as Users
   }
 
-  @Get("role")
-  @UseGuards(RoleGuard)
-  @Roles([UserRoles.ADMIN])
-  roleProtected () {
-    return { passthrough: true }
+  @Get("company/:id")
+  async GetCompanyContextToken (@Param("id") id: number, @Req() req: AuthRequest) {
+    return await this.userService.getUserCompanyContextToken(id, req.user)
   }
 }
 
