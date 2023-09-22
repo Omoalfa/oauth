@@ -1,12 +1,39 @@
-import { Body, Controller, Get, Post, Query, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, HostParam, Post, Query, Req, UseGuards } from "@nestjs/common";
 import GoogleOAuthGuard from "./guards/google-oauth.guard";
 import AuthService from "./auth.service";
 import Public from "@/modules/auth/docorators/public.decorator";
 import { AuthRequest } from "@/interface";
 import LocalGuard from "./guards/local.guard";
-import { UserSignupDto, VerifyEmailDto } from "./auth.dto";
+import { UserLoginDto, UserSignupDto, VerifyEmailDto } from "./auth.dto";
+import { ApiBody, ApiTags } from "@nestjs/swagger";
+import Users from "./user.entity";
+import { Request } from "express";
 
-@Controller('auth')
+@Controller("/auth")
+export class GeneralAuthController {
+  constructor (
+    private readonly authService: AuthService,
+  ) {}
+
+  @Get("google/redirect")
+  @UseGuards(GoogleOAuthGuard)
+  @Public()
+  async GoogleLogin (@Req() req: Request, @Query("state") state: string) {
+    const profile = req.user as any
+    const { slug } = JSON.parse(state);
+
+    const valid = await this.authService.validateUser({
+      email: profile.email,
+      name: profile.displayName,
+      slug
+    }, "google")
+
+    return await this.authService.login(valid.user, slug);
+  }
+}
+
+@Controller({ path: "/auth", host: ":slug.:domain" })
+@ApiTags("Authorization and Authentication")
 class AuthController {
   constructor (
     private readonly authService: AuthService,
@@ -17,18 +44,12 @@ class AuthController {
   @Public()
   async auth () {}
 
-  @Get("google/redirect")
-  @UseGuards(GoogleOAuthGuard)
-  @Public()
-  async GoogleLogin (@Req() req: AuthRequest) {
-    return this.authService.login(req.user);
-  }
-
   @Post("login")
   @UseGuards(LocalGuard)
   @Public()
-  async LocalLogin (@Req() req: AuthRequest) {
-    return this.authService.login(req.user);
+  @ApiBody({ type: UserLoginDto })
+  async LocalLogin (@Req() req: AuthRequest, @HostParam("slug") slug: string) {
+    return this.authService.login(req.user as Users, slug);
   }
 
   @Post("signup")

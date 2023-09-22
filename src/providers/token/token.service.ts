@@ -1,4 +1,4 @@
-import { UserInviteDto } from "@/modules/company/company.dto";
+import { UserInviteDto } from "@/modules/organization/organization.dto";
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
@@ -6,6 +6,7 @@ import { JwtService } from "@nestjs/jwt";
 export interface DecodedToken {
   sub: number,
   email: string;
+  slug: string;
   scopes?: string[],
   company_id?: number,
   company_user_id?: number,

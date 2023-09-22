@@ -1,10 +1,15 @@
-import Invitations from '@/modules/company/invitation.entity';
+import ConfigVars from '@/config/interface';
+import Invitations from '@/modules/organization/invitation.entity';
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable() 
 class MailService {
-  constructor(private mailerService: MailerService) {}
+  constructor(
+    private mailerService: MailerService,
+    private readonly config: ConfigService<ConfigVars>
+    ) {}
 
   async sendUserConfirmation(email: string, name: string, url: string) {
 
@@ -20,7 +25,9 @@ class MailService {
     });
   }
 
-  public sendEmployeeInvitation = async (email: string, url: string, name: string) => {
+  public sendEmployeeInvitation = async (email: string, token: string, name: string, resetPassword: boolean) => {
+    const url = this.config.get("frontend").base_url + resetPassword ? `/reset_password?token=${token}&requirePassword=true` : `/login`;
+
     await this.mailerService.sendMail({
       to: email,
       subject: "Invitation!!",

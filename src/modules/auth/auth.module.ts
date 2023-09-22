@@ -1,28 +1,29 @@
 import { Module } from "@nestjs/common";
-import AuthController from "./auth.controller";
+import AuthController, { GeneralAuthController } from "./auth.controller";
 import AuthService from "./auth.service";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { PassportModule } from "@nestjs/passport";
 import GoogleStrategy from "./strategies/google-oauth.strategy";
 import TokenModule from "../../providers/token/token.module";
-import Users from "../user/user.entity";
 import { LocalStrategy } from "./strategies/local.strategy";
-import CompanyUsersModule from "../company/user/company_user.module";
 import MailModule from "@/providers/mail/mail.module";
+import Users from "./user.entity";
+import OrganizationModule from "../organization/organization.module";
+import UserRoles from "./user_roles.entity";
 
 @Module({
-  controllers: [AuthController],
+  controllers: [AuthController, GeneralAuthController],
   providers: [
     AuthService, 
     GoogleStrategy,
     LocalStrategy
   ],
   imports: [
-    TypeOrmModule.forFeature([Users]),
+    TypeOrmModule.forFeature([Users, UserRoles]),
     PassportModule,
     TokenModule,
-    CompanyUsersModule,
-    MailModule
+    MailModule,
+    OrganizationModule
   ],
   exports: [AuthService]
 })

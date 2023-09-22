@@ -15,6 +15,16 @@ export class UserSignupDto {
   email: string;
 }
 
+export class UserLoginDto {
+  @IsString()
+  @IsStrongPassword()
+  password: string;
+
+  @IsEmail()
+  @IsUniqueEmail()
+  username: string;
+}
+
 export class VerifyEmailDto {
   @IsJWT()
   @IsValidVerificationToken()

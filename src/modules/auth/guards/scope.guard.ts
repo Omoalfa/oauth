@@ -1,36 +1,33 @@
 import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import Scopes from "../docorators/scopes.decorator";
+import { minimatch } from "minimatch";
 import { AuthRequest } from "@/interface";
-import { EScopes } from "@/modules/company/user/scopes";
+
 
 @Injectable()
-export class ScopeGuard implements CanActivate {
-  constructor(private reflector: Reflector) {
-    
-  }
+export class ScopesGuard implements CanActivate {
+  constructor(private reflector: Reflector) {}
 
-  canActivate(context: ExecutionContext) {
-    const reqScopes = this.reflector.getAllAndOverride<EScopes[]>(Scopes, [context.getHandler(), context.getClass()]);
+  canActivate(context: ExecutionContext): boolean {
+    const scopes = this.reflector.get<string[]>(Scopes, context.getHandler());
+    const request = context.switchToHttp().getRequest<AuthRequest>();
+    if (!scopes) return true;
+    const user = request.user;
+    let authorized = false;
 
-    const req = context.switchToHttp().getRequest<AuthRequest>();
+    if (!user) return false;
 
-    // when scope is not defined for the endpoint:::::
-    if (!reqScopes || !reqScopes.length) return true;
-
-    //sudo users can do everything a user can do!
-    if (req.user.scopes.includes(EScopes.SUDO)) return true;
-
-    let authorize = false;
-
-    for (const scope of req.user.scopes) {
-      if (reqScopes.includes(scope)) {
-        authorize = true;
+    for (const userScope of request.scopes) {
+      for (let scope of scopes) {
+        for (const key in request.params)
+          scope = scope.replace(`{${key}}`, request.organization?.slug);
+        authorized = authorized || minimatch(scope, userScope);
+        if (authorized) return true;
       }
     }
-
-    return authorize;
+    return authorized;
   }
 }
 
-export default ScopeGuard;
+export default ScopesGuard;

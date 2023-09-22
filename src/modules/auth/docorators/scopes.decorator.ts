@@ -1,6 +1,5 @@
-import { EScopes } from '@/modules/company/user/scopes';
-import { Reflector } from '@nestjs/core';
+import { SetMetadata } from '@nestjs/common';
 
-const Scopes = Reflector.createDecorator<EScopes[]>();
+const Scopes = (...scopes: string[]) => SetMetadata('scopes', scopes);
 
 export default Scopes;

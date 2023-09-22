@@ -10,11 +10,11 @@ import { join } from 'path';
       // transport: 'smtps://user@example.com:topsecret@smtp.example.com',
       // or
       transport: {
-        host: 'smtp.example.com',
+        host: process.env.EMAIL_HOST,
         secure: false,
         auth: {
-          user: 'user@example.com',
-          pass: 'topsecret',
+          user: process.env.MAIL_USER,
+          pass: process.env.MAIL_PASS,
         },
       },
       defaults: {

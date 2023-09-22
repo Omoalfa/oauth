@@ -5,7 +5,6 @@ import AuthService from "@modules/auth/auth.service";
 import { Request } from "express";
 import { Strategy } from "passport-strategy";
 import { Reflector } from "@nestjs/core";
-import { AuthUser } from "@/interface";
 
 class AuthStrategy extends Strategy {
   name = "jwt"
@@ -28,13 +27,15 @@ class JwtStrategy extends PassportStrategy(AuthStrategy) {
       try {
         const decoded: DecodedToken = this.authService.verifyToken(token);
 
-        const { email, company_id, company_user_id, sub: id } = decoded
+        const { email, slug, sub: id } = decoded
   
-        const user: AuthUser = await this.authService.validateUser({ email, id }, "local");
+        const data = await this.authService.validateUser({ email, id, slug }, "local");
 
-        if (!user) return this.fail("Unauthorized request", 401)
+        if (!data.user) return this.fail("Unauthorized request", 401)
+
+        const scopes = this.fetchUserScopes(data.user.id);
   
-        return this.success({ ...user, type: "user" });
+        return this.success({ ...data, user: { ...data.user, scopes }, type: "user" });
       } catch (error) {
         return this.fail("Invalid token", 401)
       }
@@ -65,6 +66,20 @@ class JwtStrategy extends PassportStrategy(AuthStrategy) {
     const key = req.headers["x-api-key"] as string;
 
     return { uuid, key };
+  }
+
+  fetchUserScopes = async (id: number): Promise<string[]> => {
+    const userRoles = await this.authService.getUserRoles(id)
+
+    let scopes: string[] = [];
+
+    userRoles.forEach(userRole => {
+      const scopeArray = userRole.role.scopes.split(":::");
+
+      scopes = [...scopes, ...scopeArray];
+    })
+
+    return scopes;
   }
 }
 

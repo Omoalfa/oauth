@@ -2,45 +2,54 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import TokenService, { DecodedToken } from "../../providers/token/token.service";
-import Users from "@modules/user/user.entity";
 import * as bcrypt from "bcryptjs";
-import CompanyUsersServices from "../company/user/company_user.service";
-import CompanyUsers from "../company/user/company_user.entity";
 import { UserSignupDto } from "./auth.dto";
 import { nanoid } from "nanoid";
 import { ConfigService } from "@nestjs/config";
 import MailService from "@/providers/mail/mail.service";
+import Users, { EUserType } from "./user.entity";
+import OrganizationService from "../organization/organization.service";
+import Organization from "../organization/organization.entity";
+import UserRoles from "./user_roles.entity";
 
 @Injectable()
 class AuthService {
   constructor (
     @InjectRepository(Users) private readonly userRepository: Repository<Users>,
+    @InjectRepository(UserRoles) private readonly userRoleRepository: Repository<UserRoles>,
     private readonly tokenService: TokenService,
-    private readonly companyUsersService: CompanyUsersServices,
     private readonly mailerService: MailService,
     private readonly configService: ConfigService,
+    private readonly organizationService: OrganizationService
   ) {}
 
   private salt = bcrypt.genSaltSync(15);
 
-  public validateUser = async (data: { email: string, password?: string, name?: string, avatar?: string, id?: number }, type: 'local' | 'google'): Promise<Users> => {
-    const { email, name, avatar, password, id } = data;
+  public validateUser = async (data: { email: string, slug: string, password?: string, name?: string, avatar?: string, id?: number }, type: 'local' | 'google'): Promise<{ user: Users, organization: Organization }> => {
+    const { email, name, avatar, password, id, slug } = data;
+    const organization = await this.organizationService.getOrganizationBySlug(slug);
+
     if (type === 'local' && id) {
-      return await this.userRepository.findOneBy({ email, id })
+      const user = await this.userRepository.findOneBy({ email, id, organization: { id: organization.id } })
+
+      return user ? { user, organization } : null
     }
 
-    let user = await this.userRepository.findOneBy({ email });
+    let user = await this.userRepository.findOneBy({ email, organization: { id: organization.id } });
 
     if (type === 'local' && password) {
       if (bcrypt.compareSync(password, user.password)) {
-        return user;
+        return { user, organization };
       }
     }
 
     if (type === 'google') {
-      if (user) return user;
-      const new_user = this.userRepository.create({ email, name, avatar, isVerified: true })
-      return await this.userRepository.save(new_user);
+      if (user) return { user, organization };
+      const new_user = this.userRepository.create({ email, name, avatar, isVerified: true, type: EUserType.CUSTOMER, organization })
+  
+      user = await this.userRepository.save(new_user);
+
+      return { user, organization }
     }
     return null;
   }
@@ -70,12 +79,8 @@ class AuthService {
     return;
   }
 
-  public getCompanyCtx = async (user_id: number, id: number): Promise<CompanyUsers> => {
-    return await this.companyUsersService.getUserCompanyDetails(user_id, id);
-  }
-
-  public login = async (user: Users) => {
-    const token = this.tokenService.sign({ email: user.email, sub: user.id })
+  public login = async (user: Users, slug: string) => {
+    const token = this.tokenService.sign({ email: user.email, sub: user.id, slug })
 
     return { token };
   }
@@ -96,6 +101,15 @@ class AuthService {
     await this.userRepository.update({ email }, { isVerified: true });
 
     return;
+  }
+
+  public getUserRoles = async (id: number) => {
+    const roles = await this.userRoleRepository.find({
+      where: { user: { id }},
+      relations: { role: true }
+    })
+
+    return roles;
   }
 }
 
