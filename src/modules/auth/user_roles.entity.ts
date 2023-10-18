@@ -1,4 +1,4 @@
-import Roles from "@/providers/roles/role.entity";
+import Roles from "../../providers/roles/role.entity";
 import { Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import Users from "./user.entity";
 

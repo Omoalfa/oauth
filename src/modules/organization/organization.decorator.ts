@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { ValidationArguments, ValidationOptions, ValidatorConstraint, ValidatorConstraintInterface, registerDecorator } from "class-validator";
 import OrganizationService from "./organization.service";
-import RoleServies from "@/providers/roles/role.service";
+import RoleServies from "../../providers/roles/role.service";
 
 @ValidatorConstraint({ name: 'UserExists', async: true })
 @Injectable()

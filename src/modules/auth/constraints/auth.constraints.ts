@@ -1,19 +1,19 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { ValidationArguments, ValidatorConstraint, ValidatorConstraintInterface } from "class-validator";
 import AuthService from "../auth.service";
-import TokenService from "@/providers/token/token.service";
+import TokenService from "../../../providers/token/token.service";
 
 ///Constraints ::::::
 @ValidatorConstraint({ name: 'UniqueEmail', async: true })
 @Injectable()
-export class isUniqueEmailRule implements ValidatorConstraintInterface {
-  constructor(private authService: AuthService) {}
+export class IsUniqueEmailRule implements ValidatorConstraintInterface {
+  constructor(@Inject(AuthService) private readonly authService: AuthService) {}
 
   async validate(value: string, args: ValidationArguments) {
     try {
       const exist = await this.authService.isUniqueEmail(value);
 
-      return exist;
+      return !exist;
     } catch (e) {
       return false;
     }

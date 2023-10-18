@@ -3,7 +3,7 @@
 
 import { ConfigFactory } from '@nestjs/config/dist/interfaces';
 import { config } from 'dotenv';
-import ConfigVars from './interface';
+import ConfigVars, { DBConfig } from './interface';
 
 config();
 
@@ -12,15 +12,29 @@ const int = (val: string | undefined, num: number): number =>
 const bool = (val: string | undefined, bool: boolean): boolean =>
   val == null ? bool : val == 'true';
 
-const configuration: ConfigVars = {
-  database: {
+const getDbConfig = (): DBConfig => {
+  if (process.env.NODE_ENV === "test") {
+    return {
+      host: process.env.TEST_DB_HOST || "localhost",
+      password: process.env.TEST_DB_PASS,
+      port: int(process.env.TEST_DB_PORT, 5432),
+      ssl: bool(process.env.TEST_DB_SSL, true),
+      name: process.env.TEST_DB_NAME,
+      username: process.env.TEST_DB_USER,
+    }
+  } 
+  return {
     host: process.env.DB_HOST || "localhost",
     password: process.env.DB_PASS,
     port: int(process.env.DB_PORT, 5432),
     ssl: bool(process.env.DB_SSL, true),
     name: process.env.DB_NAME,
     username: process.env.DB_USER,
-  },
+  }
+}
+
+const configuration: ConfigVars = {
+  database: getDbConfig(),
   jwt: {
     secret: process.env.JWT_SECRET || 'seKOENVOEINLND234NFI',
     auth_secret: process.env.JWT_AUTH_SECRET || 'seKOENVOEINLND234ERIV84HR'

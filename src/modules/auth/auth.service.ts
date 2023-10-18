@@ -6,7 +6,7 @@ import * as bcrypt from "bcryptjs";
 import { UserSignupDto } from "./auth.dto";
 import { nanoid } from "nanoid";
 import { ConfigService } from "@nestjs/config";
-import MailService from "@/providers/mail/mail.service";
+import MailService from "../../providers/mail/mail.service";
 import Users, { EUserType } from "./user.entity";
 import OrganizationService from "../organization/organization.service";
 import Organization from "../organization/organization.entity";
@@ -55,13 +55,16 @@ class AuthService {
   }
 
   public isUniqueEmail = async (email: string): Promise<boolean> => {
-    const user = this.userRepository.findOneBy({ email });
+    const user = await this.userRepository.findOneBy({ email });
 
+    console.log(user);
     return !!user;
   }
 
-  public localSignup = async (data: UserSignupDto) => {
+  public localSignup = async (slug: string, data: UserSignupDto) => {
     const { email, name, password: raw } = data;
+
+    const organization = await this.organizationService.getOrganizationBySlug(slug);
 
     const password = bcrypt.hashSync(raw, this.salt);
     const verificationCode = nanoid(5)
@@ -70,7 +73,7 @@ class AuthService {
 
     const url = `${this.configService.get<string>('frontend.base_url')}/verify?token=${token}`;
 
-    const user = this.userRepository.create({ email, name, password, verificationCode });
+    const user = this.userRepository.create({ email, name, password, verificationCode, type: EUserType.CUSTOMER, organization });
 
     await this.userRepository.save(user);
 
@@ -114,3 +117,4 @@ class AuthService {
 }
 
 export default AuthService;
+

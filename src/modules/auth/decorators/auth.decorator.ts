@@ -1,5 +1,5 @@
 import { ValidationOptions, registerDecorator } from "class-validator";
-import { IsValidVerificationTokenRule, isUniqueEmailRule } from "../constraints/auth.constraints";
+import { IsValidVerificationTokenRule, IsUniqueEmailRule } from "../constraints/auth.constraints";
 
 /// Decorators ::::::::::
 export function IsUniqueEmail(_property?: any, validationOptions?: ValidationOptions) {
@@ -9,7 +9,7 @@ export function IsUniqueEmail(_property?: any, validationOptions?: ValidationOpt
       target: object.constructor,
       propertyName: propertyName,
       options: validationOptions,
-      validator: isUniqueEmailRule,
+      validator: IsUniqueEmailRule,
     });
   };
 }

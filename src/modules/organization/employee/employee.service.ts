@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import TokenService from "@/providers/token/token.service";
+import TokenService from "../../../providers/token/token.service";
 
 @Injectable()
 class OrganizationEmployeesServices {

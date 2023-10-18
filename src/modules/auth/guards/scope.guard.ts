@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
-import Scopes from "../docorators/scopes.decorator";
+import Scopes from "../decorators/scopes.decorator";
 import { minimatch } from "minimatch";
 import { AuthRequest } from "@/interface";
 
@@ -20,8 +20,7 @@ export class ScopesGuard implements CanActivate {
 
     for (const userScope of request.scopes) {
       for (let scope of scopes) {
-        for (const key in request.params)
-          scope = scope.replace(`{${key}}`, request.organization?.slug);
+        scope = scope.replace("{ORG_SLUG}", request.organization?.slug);
         authorized = authorized || minimatch(scope, userScope);
         if (authorized) return true;
       }

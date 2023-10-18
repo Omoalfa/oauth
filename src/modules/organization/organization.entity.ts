@@ -27,22 +27,22 @@ class Organization {
   type: EOrganizationType;
 
   @OneToMany(() => Users, (e) => e.organization)
-  employees: Users[];
+  employees?: Users[];
 
   @ManyToOne(() => Users)
-  owner: Users;
+  owner?: Users;
 
   @OneToMany(() => Users, (c) => c.organization)
-  customers: Users[]
+  customers?: Users[]
 
   @CreateDateColumn({ type: "timestamp" })
-  createdAt: Date;
+  createdAt?: Date;
 
   @DeleteDateColumn({ type: "timestamp" })
-  deletedAt: Date;
+  deletedAt?: Date;
 
   @UpdateDateColumn({ type: "timestamp" })
-  updatedAt: Date;
+  updatedAt?: Date;
 }
 
 export default Organization;

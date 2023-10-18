@@ -1,0 +1,76 @@
+{
+  "users": [
+    {
+      "email": "engr.omoalfa@gmail.com",
+      "name": "Omoalfa Dev",
+      "password": "$2a$15$G3V68l7jicR8.x.CB9PacuKGlfWARtS77FefwsAj3UG8SrmhBLbhW",
+      "verificationCode": "DsDmA",
+      "type": "CUSTOMER",
+      "id": 6
+    },
+    {
+      "email": "engr.omoalfa@gmail.com",
+      "name": "Omoalfa Dev",
+      "password": "$2a$15$0CgKOSiYnEf.Vck6.TkKKuaKL5eR72AiaLyrjmrmw71yOK7O875fm",
+      "verificationCode": "2JUdH",
+      "type": "CUSTOMER",
+      "organization": {
+        "email": "admin@advertyzly.com",
+        "slug": "platform",
+        "name": "Advertyzly",
+        "website": "advertyzly.com",
+        "type": "PLATFORM",
+        "id": 1
+      },
+      "id": 2
+    },
+    {
+      "email": "engr.omoalfa@gmail.com",
+      "name": "Omoalfa Dev",
+      "password": "$2a$15$LAYJekXfUXEdAc8UB2w35.8Rj.hCxszjGU5pPMRmr2sDQylTFdDju",
+      "verificationCode": "A5l20",
+      "type": "CUSTOMER",
+      "organization": {
+        "email": "admin@advertyzly.com",
+        "slug": "platform",
+        "name": "Advertyzly",
+        "website": "advertyzly.com",
+        "type": "PLATFORM",
+        "id": 1
+      },
+      "id": 3
+    },
+    {
+      "email": "engr.omoalfa@gmail.com",
+      "name": "Omoalfa Dev",
+      "password": "$2a$15$P//.aGnfgcSuUdVnlvQLOu2xsYq.JTbAC7D1.7oV2WDHhUuOB8uHe",
+      "verificationCode": "uGQfV",
+      "type": "CUSTOMER",
+      "organization": {
+        "email": "admin@advertyzly.com",
+        "slug": "platform",
+        "name": "Advertyzly",
+        "website": "advertyzly.com",
+        "type": "PLATFORM",
+        "id": 1
+      },
+      "id": 4
+    },
+    {
+      "email": "engr.omoalfa@gmail.com",
+      "name": "Omoalfa Dev",
+      "password": "$2a$15$o5vAWujKRDHoPAIpDUNfcubVRbG1IJpbCSzj5Wru9zQEVLT2ZQEWu",
+      "verificationCode": "AV6cz",
+      "type": "CUSTOMER",
+      "organization": {
+        "email": "admin@advertyzly.com",
+        "slug": "platform",
+        "name": "Advertyzly",
+        "website": "advertyzly.com",
+        "type": "PLATFORM",
+        "id": 1
+      },
+      "id": 5
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "Omoalfa Dev",
+      "type": "EMPLOYEE",
+      "email": "admin@advertyzly.com",
+      "password": "password",
+      "avatar": "https://google.com",
+      "username": "Omoalfa"
+    },
+    {
+      "email": "engr.omoalfa@gmail.com",
+      "name": "Omoalfa Dev",
+      "password": "$2a$15$KRR8abNVl8G9XmcsgT5q7.QEFTol4QOs/EgWyBVOIs3BI71Jn5WRa",
+      "verificationCode": "qmsTt",
+      "type": "CUSTOMER",
+      "organization": {
+        "email": "admin@advertyzly.com",
+        "slug": "platform",
+        "name": "Advertyzly",
+        "website": "advertyzly.com",
+        "type": "PLATFORM",
+        "id": 1
+      },
+      "id": 2,
+      "isVerified": true
+    }
+  ],
+  "organizations": [
+    {
+      "email": "admin@advertyzly.com",
+      "slug": "platform",
+      "name": "Advertyzly",
+      "website": "advertyzly.com",
+      "type": "PLATFORM",
+      "id": 1
+    }
+  ],
+  "user_roles": [],
+  "customer_groups": [],
+  "roles": [],
+  "tokens": []
+}

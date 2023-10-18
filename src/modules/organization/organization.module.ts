@@ -3,17 +3,19 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import Organization from "./organization.entity";
 import OrganizationController from "./organization.controller";
 import OrganizationService from "./organization.service";
-import TokenModule from "@/providers/token/token.module";
+import TokenModule from "../../providers/token/token.module";
 import Invitations from "./invitation.entity";
 import Users from "../auth/user.entity";
 import UserRoles from "../auth/user_roles.entity";
-import MailModule from "@/providers/mail/mail.module";
+import MailModule from "../../providers/mail/mail.module";
+import RoleModule from "../../providers/roles/role.module";
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Organization, Invitations, Users, UserRoles]),
     TokenModule,
-    MailModule
+    MailModule,
+    RoleModule
   ],
   exports: [OrganizationService],
   providers: [OrganizationService],

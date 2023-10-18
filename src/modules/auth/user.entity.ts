@@ -29,10 +29,10 @@ class Users {
   password: string;
 
   @Column({ type: "text", nullable: true })
-  verificationCode: string;
+  verificationCode?: string;
 
   @Column({ type: "boolean", default: false })
-  isVerified: boolean;
+  isVerified?: boolean;
 
   @Column({ type: "text", nullable: true })
   username: string;
@@ -40,17 +40,17 @@ class Users {
   @Column({ type: "enum", enum: EUserType })
   type: EUserType;
 
-  @OneToMany(() => UserRoles, ur => ur.user)
-  roles: UserRoles[]
+  @OneToMany(() => UserRoles, ur => ur.user, { onDelete: "CASCADE" })
+  roles?: UserRoles[]
 
-  @ManyToOne(() => PlatformCustomerGroup)
-  platformCustomerGroup: PlatformCustomerGroup;
+  @ManyToOne(() => PlatformCustomerGroup, { onDelete: "SET NULL" })
+  platformCustomerGroup?: PlatformCustomerGroup;
 
-  @ManyToOne(() => OrganizationCustomerGroup)
-  customerGroup: OrganizationCustomerGroup;
+  @ManyToOne(() => OrganizationCustomerGroup, { onDelete: "SET NULL" })
+  customerGroup?: OrganizationCustomerGroup;
 
-  @ManyToOne(() => Organization)
-  organization: Organization;
+  @ManyToOne(() => Organization, { onDelete: "SET NULL" })
+  organization?: Organization;
 }
 
 export default Users;

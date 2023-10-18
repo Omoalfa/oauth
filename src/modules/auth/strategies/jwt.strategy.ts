@@ -1,10 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
-import { DecodedToken } from "@/providers/token/token.service";
-import AuthService from "@modules/auth/auth.service";
+import { DecodedToken } from "../../../providers/token/token.service";
+import AuthService from "../auth.service";
 import { Request } from "express";
 import { Strategy } from "passport-strategy";
-import { Reflector } from "@nestjs/core";
 
 class AuthStrategy extends Strategy {
   name = "jwt"
@@ -14,14 +13,12 @@ class AuthStrategy extends Strategy {
 class JwtStrategy extends PassportStrategy(AuthStrategy) {
   constructor (
     private readonly authService: AuthService, 
-    private readonly reflector: Reflector,
   ) {
     super()
   }
 
   async authenticate(req: Request): Promise<void> {
     const token = this.extractTokenFromHeader(req);
-    // const { uuid, key } = this.extractApiCredentialsFromRequest(req);
 
     if (token) {
       try {
@@ -39,21 +36,6 @@ class JwtStrategy extends PassportStrategy(AuthStrategy) {
       } catch (error) {
         return this.fail("Invalid token", 401)
       }
-    // } else if (uuid && key) {
-    //   try {
-    //     const apikey = await this.apikeyService.validateApiKey(uuid, key);
-
-    //     if (!apikey) return this.fail("Invalid credentials", 401);
-
-    //     if (apikey.expiresIn && apikey.expiresIn < new Date()) return this.fail("Api key expired", 401);
-
-    //     if (apikey.deletedAt) return this.fail("Api key disabled", 401)
-
-    //     return this.success({ ...apikey.user, scopes: apikey.scopes, type: "api" })
-    //   } catch (error) {
-    //     return this.fail("Invalid credentials", 401)
-    //   }
-    // }
     }
 
     return this.fail("Unauthorized", 401)

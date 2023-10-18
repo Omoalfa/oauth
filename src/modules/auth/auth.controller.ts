@@ -1,7 +1,7 @@
 import { Body, Controller, Get, HostParam, Post, Query, Req, UseGuards } from "@nestjs/common";
 import GoogleOAuthGuard from "./guards/google-oauth.guard";
 import AuthService from "./auth.service";
-import Public from "@/modules/auth/docorators/public.decorator";
+import Public from "./decorators/public.decorator";
 import { AuthRequest } from "@/interface";
 import LocalGuard from "./guards/local.guard";
 import { UserLoginDto, UserSignupDto, VerifyEmailDto } from "./auth.dto";
@@ -54,8 +54,9 @@ class AuthController {
 
   @Post("signup")
   @Public()
-  async LocalSignup (@Body() data: UserSignupDto) {
-    await this.authService.localSignup(data);
+  async LocalSignup (@Body() data: UserSignupDto, @HostParam("slug")slug: string) {
+    console.log("here")
+    await this.authService.localSignup(slug, data);
 
     return { message: 'An activation link has been sent to your email, please activate your account!' }
   }

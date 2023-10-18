@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import TokenModule from "@/providers/token/token.module";
+import TokenModule from "../../../providers/token/token.module";
 import Users from "./platform.controller";
 import PlatformController from "./platform.controller";
 import PlatformService from "./platform.service";

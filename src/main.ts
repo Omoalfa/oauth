@@ -10,6 +10,7 @@ config()
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors();
+  const port = process.env.NODE_ENV === "test" ? process.env.TEST_PORT : process.env.PORT;
 
   app.setGlobalPrefix("api");
   app.useGlobalPipes(new ValidationPipe());
@@ -24,6 +25,6 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('doc', app, document);
 
-  await app.listen(process.env.PORT);
+  await app.listen(Number(port));
 }
 bootstrap();

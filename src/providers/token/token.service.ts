@@ -1,4 +1,4 @@
-import { UserInviteDto } from "@/modules/organization/organization.dto";
+import { UserInviteDto } from "../../modules/organization/organization.dto";
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
@@ -35,7 +35,7 @@ class TokenService {
 
   public generateInviteToken (data: UserInviteDto): string {
     const token = this.jwtService.sign(data, {
-      secret: this.configService.get<string>("jwt.invite_secret"),
+      secret: this.configService.get<string>("jwt.auth_secret"),
       expiresIn: '30d'
     })
 
@@ -43,13 +43,13 @@ class TokenService {
   }
 
   public decodeInviteToken (token: string): UserInviteDto {
-    const decoded = this.jwtService.verify(token, { secret: this.configService.get<string>("jwt.invite_secret") });
+    const decoded = this.jwtService.verify(token, { secret: this.configService.get<string>("jwt.auth_secret") });
     return decoded as UserInviteDto;
   }
 
   public generateVerificationToken (data: { email: string, code: string }): string {
     const token = this.jwtService.sign(data, {
-      secret: this.configService.get<string>("jwt.invite_secret"),
+      secret: this.configService.get<string>("jwt.auth_secret"),
       expiresIn: '30d'
     })
 
@@ -57,7 +57,7 @@ class TokenService {
   }
 
   public decodeVerificationToken (token: string): { email: string, code: string } {
-    const decoded = this.jwtService.verify(token, { secret: this.configService.get<string>("jwt.invite_secret") });
+    const decoded = this.jwtService.verify(token, { secret: this.configService.get<string>("jwt.auth_secret") });
     return decoded as { email: string, code: string };
   }
 }

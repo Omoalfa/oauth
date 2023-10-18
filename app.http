@@ -1,0 +1,8 @@
+POST http://platform.localhost:3003/api/auth/signup 
+Content-Type: application/json
+
+{
+  "email": "engr.omoalfa@gmail.com",
+  "password": "Ol@334_ejgiR",
+  "name": "Omoalfa Dev"
+}

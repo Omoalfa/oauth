@@ -1,5 +1,5 @@
 import { IsEmail, IsJWT, IsNotEmpty, IsString, IsStrongPassword } from "class-validator";
-import { IsUniqueEmail, IsValidVerificationToken } from "./docorators/auth.decorator";
+import { IsUniqueEmail, IsValidVerificationToken } from "./decorators/auth.decorator";
 
 export class UserSignupDto {
   @IsString()

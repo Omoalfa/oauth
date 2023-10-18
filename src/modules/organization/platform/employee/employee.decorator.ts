@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { ValidationArguments, ValidationOptions, ValidatorConstraint, ValidatorConstraintInterface, registerDecorator } from "class-validator";
-import TokenService from "@/providers/token/token.service";
+import TokenService from "../../../../providers/token/token.service";
 
 @ValidatorConstraint({ name: 'UserExists', async: true })
 @Injectable()

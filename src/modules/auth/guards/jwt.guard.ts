@@ -1,8 +1,7 @@
 import { ExecutionContext, Inject, Injectable } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { AuthGuard } from "@nestjs/passport";
-import { IS_PUBLIC } from "@/modules/auth/docorators/public.decorator";
-import Scopes from "../docorators/scopes.decorator";
+import { IS_PUBLIC } from "../decorators/public.decorator";
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
@@ -15,8 +14,6 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       context.getHandler(),
       context.getClass(),
     ]);
-
-    // const scopes = this.reflector.getAllAndOverride<ApikeyScopes[] | "user">(Scopes, [context.getHandler(), context.getClass()]);
 
     if (isPublic) return true;
     return super.canActivate(context);

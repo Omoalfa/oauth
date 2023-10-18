@@ -3,7 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import Roles from "./role.entity";
 import { Repository } from "typeorm";
 import { CreateRoleDto } from "./role.dto";
-import Organization from "@/modules/organization/organization.entity";
+import Organization from "../../modules/organization/organization.entity";
 import { EScopes } from "./scopes";
 
 
