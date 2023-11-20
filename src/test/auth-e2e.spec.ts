@@ -54,7 +54,6 @@ describe('Auth (e2e)', () => {
     // // const call = sendUserConfirmationspy.mock.lastCall
     // // const url = call[2]
 
-    // console.log(res.body);
     expect(true).toEqual(true);
   })
 });

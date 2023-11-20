@@ -3,17 +3,18 @@ import { ValidationArguments, ValidationOptions, ValidatorConstraint, ValidatorC
 import OrganizationService from "./organization.service";
 import RoleServies from "../../providers/roles/role.service";
 
-@ValidatorConstraint({ name: 'UserExists', async: true })
+@ValidatorConstraint({ name: 'Organization Exists', async: true })
 @Injectable()
-class OrganizationExistsRule implements ValidatorConstraintInterface {
+export class OrganizationExistsRule implements ValidatorConstraintInterface {
   constructor(private organizationService: OrganizationService) {}
 
   async validate(value: string, args: ValidationArguments) {
     const { constraints } = args;
     try {
       const exist = await this.organizationService.organizationExist(value, constraints[0].field);
+      console.log(exist);
 
-      return constraints[0].status && exist;
+      return constraints[0].status && !!exist;
     } catch (e) {
       return false;
     }
@@ -24,9 +25,9 @@ class OrganizationExistsRule implements ValidatorConstraintInterface {
   }
 }
 
-@ValidatorConstraint({ name: 'UserExists', async: true })
+@ValidatorConstraint({ name: 'Role Exists', async: true })
 @Injectable()
-class RoleExistsRule implements ValidatorConstraintInterface {
+export class RoleExistsRule implements ValidatorConstraintInterface {
   constructor(private roleServices: RoleServies) {}
 
   async validate(value: number, args: ValidationArguments) {
@@ -46,7 +47,7 @@ class RoleExistsRule implements ValidatorConstraintInterface {
 }
 
 interface OrganizationExistsProp {
-  field: 'email' | 'name' | 'website' | 'id',
+  field: 'email' | 'name' | 'website' | 'id' | 'slug',
   state: boolean
 }
 

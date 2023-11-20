@@ -9,6 +9,7 @@ import Users from "../auth/user.entity";
 import UserRoles from "../auth/user_roles.entity";
 import MailModule from "../../providers/mail/mail.module";
 import RoleModule from "../../providers/roles/role.module";
+import { OrganizationExistsRule, RoleExistsRule } from "./organization.decorator";
 
 @Module({
   imports: [
@@ -18,7 +19,7 @@ import RoleModule from "../../providers/roles/role.module";
     RoleModule
   ],
   exports: [OrganizationService],
-  providers: [OrganizationService],
+  providers: [OrganizationService, OrganizationExistsRule, RoleExistsRule],
   controllers: [OrganizationController]
 })
 class OrganizationModule {};

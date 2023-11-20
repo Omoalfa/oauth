@@ -37,14 +37,11 @@ class Organization {
   type: EOrganizationType;
 
   @OneToMany(() => Users, (e) => e.organization)
-  employees?: Users[];
+  users?: Users[];
 
   @ManyToOne(() => Users)
   @JoinColumn()
   owner?: Users;
-
-  @OneToMany(() => Users, (c) => c.organization)
-  customers?: Users[];
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt?: Date;

@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToMany, ManyToOne, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from "typeorm";
 import Organization from "../../modules/organization/organization.entity";
 
 @Entity("roles")
@@ -17,6 +17,7 @@ class Roles {
   isActive: boolean;
 
   @ManyToOne(() => Organization)
+  @JoinColumn()
   owner: Organization;
 
   @CreateDateColumn({ type: "timestamp" })

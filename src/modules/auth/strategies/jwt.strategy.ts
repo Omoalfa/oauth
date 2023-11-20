@@ -17,11 +17,9 @@ class JwtStrategy extends PassportStrategy(AuthStrategy) {
 
   async authenticate(req: Request): Promise<void> {
     const token = this.extractTokenFromHeader(req);
-    console.log(token);
     if (token) {
       try {
         const decoded: DecodedToken = this.authService.verifyToken(token);
-        console.log(decoded);
 
         const { email, slug, sub: id } = decoded;
 

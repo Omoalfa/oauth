@@ -27,24 +27,16 @@ class OrganizationService {
     private readonly mailService: MailService,
   ) {}
 
-  public getOrganizationBySlug = async (
-    slug: string,
-  ): Promise<Organization> => {
-    const organization = await this.organizationRepo.findOneBy({ slug });
-
-    return organization;
-  };
-
   public organizationExist = async (
     value: string | number,
-    field: 'name' | 'email' | 'website',
+    field: 'name' | 'email' | 'website' | 'slug',
   ) => {
     let query: any = {};
     query[field] = value;
 
     const organization = await this.organizationRepo.findOneBy(query);
 
-    return !!organization;
+    return organization;
   };
 
   public createUserOrganization = async (

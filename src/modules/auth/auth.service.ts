@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import TokenService, {
@@ -39,61 +39,63 @@ class AuthService {
     },
     type: 'local' | 'google',
   ): Promise<{ user: Users; organization: Organization }> => {
-    const { email, name, avatar, password, id, slug } = data;
-    const organization =
-      await this.organizationService.getOrganizationBySlug(slug);
+    try {
+      const { email, name, avatar, password, id, slug } = data;
+      const organization = await this.organizationService.organizationExist(slug, 'slug');
+      console.log(organization, "queried organization table")
 
-    if (type === 'local' && id) {
-      const user = await this.userRepository.findOneBy({
+      if (type === 'local' && id) {
+        const user = await this.userRepository.findOneBy({
+          email,
+          id,
+          organization: { id: organization?.id },
+        });
+
+        return user ? { user, organization } : null;
+      }
+
+      let user = await this.userRepository.findOneBy({
         email,
-        id,
         organization: { id: organization?.id },
       });
 
-      return user ? { user, organization } : null;
-    }
+      if (type === 'local' && password) {
+        if (bcrypt.compareSync(password, user.password)) {
+          return { user, organization };
+        }
+      }
 
-    let user = await this.userRepository.findOneBy({
-      email,
-      organization: { id: organization?.id },
-    });
+      if (type === 'google') {
+        if (user) return { user, organization };
+        const new_user = this.userRepository.create({
+          email,
+          name,
+          avatar,
+          isVerified: true,
+          type: EUserType.CUSTOMER,
+          organization,
+        });
 
-    if (type === 'local' && password) {
-      if (bcrypt.compareSync(password, user.password)) {
+        user = await this.userRepository.save(new_user);
+
         return { user, organization };
       }
+      return null;
+    } catch (error) {
+      throw new InternalServerErrorException()
     }
-
-    if (type === 'google') {
-      if (user) return { user, organization };
-      const new_user = this.userRepository.create({
-        email,
-        name,
-        avatar,
-        isVerified: true,
-        type: EUserType.CUSTOMER,
-        organization,
-      });
-
-      user = await this.userRepository.save(new_user);
-
-      return { user, organization };
-    }
-    return null;
   };
 
   public isUniqueEmail = async (email: string): Promise<boolean> => {
     const user = await this.userRepository.findOneBy({ email });
 
-    console.log(user);
     return !!user;
   };
 
   public localSignup = async (slug: string, data: UserSignupDto) => {
     const { email, name, password: raw } = data;
 
-    const organization =
-      await this.organizationService.getOrganizationBySlug(slug);
+    const organization = await this.organizationService.organizationExist(slug, "slug");
 
     const password = bcrypt.hashSync(raw, this.salt);
     const verificationCode = nanoid(5);
@@ -122,22 +124,9 @@ class AuthService {
   };
 
   public login = async (user: Users, slug: string) => {
-    const authUser = await this.validateUser(
-      {
-        email: user.email,
-        password: user.password,
-        slug,
-      },
-      'local',
-    );
-    console.log(authUser, 'here');
-
-    if (!authUser) {
-      throw new UnauthorizedException(401, 'Invalid credentials');
-    }
     const token = this.tokenService.sign({
-      email: authUser.user.email,
-      sub: authUser.user.id,
+      email: user.email,
+      sub: user.id,
       slug,
     });
 

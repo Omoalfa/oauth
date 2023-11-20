@@ -6,6 +6,7 @@ import {
   Post,
   Query,
   Req,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import GoogleOAuthGuard from './guards/google-oauth.guard';
@@ -26,19 +27,23 @@ export class GeneralAuthController {
   @UseGuards(GoogleOAuthGuard)
   @Public()
   async GoogleLogin(@Req() req: Request, @Query('state') state: string) {
-    const profile = req.user as any;
-    const { slug } = JSON.parse(state);
+    try {
+      const profile = req.user as any;
+      const { slug } = JSON.parse(state);
 
-    const valid = await this.authService.validateUser(
-      {
-        email: profile.email,
-        name: profile.displayName,
-        slug,
-      },
-      'google',
-    );
+      const valid = await this.authService.validateUser(
+        {
+          email: profile.email,
+          name: profile.displayName,
+          slug,
+        },
+        'google',
+      );
 
-    return await this.authService.login(valid.user, slug);
+      return await this.authService.login(valid.user, slug);
+    } catch (error) {
+      throw new UnauthorizedException(401, error)
+    }
   }
 }
 
@@ -57,7 +62,21 @@ class AuthController {
   @Public()
   @ApiBody({ type: UserLoginDto })
   async LocalLogin(@Req() req: AuthRequest, @HostParam('slug') slug: string) {
-    return this.authService.login(req.user as Users, slug);
+
+    const authUser = await this.authService.validateUser(
+      {
+        email: req.user.email,
+        password: req.user.password,
+        slug,
+      },
+      'local',
+    );
+
+    if (!authUser) {
+      throw new UnauthorizedException(401, 'Invalid credentials');
+    }
+
+    return this.authService.login(authUser.user as Users, slug);
   }
 
   @Post('signup')
@@ -66,7 +85,6 @@ class AuthController {
     @Body() data: UserSignupDto,
     @HostParam('slug') slug: string,
   ) {
-    console.log('here');
     await this.authService.localSignup(slug, data);
 
     return {

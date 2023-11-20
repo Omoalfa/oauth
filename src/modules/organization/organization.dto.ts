@@ -16,6 +16,11 @@ export class CreateOrganizationDto {
   @IsUrl()
   @OrganizationExists({ field: 'website', state: false })
   website: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @OrganizationExists({ field: 'slug', state: false })
+  slug: string;
 }
 
 export class UserInviteDto {

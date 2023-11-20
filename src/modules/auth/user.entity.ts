@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, Unique } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, Unique } from "typeorm";
 import Organization from "../organization/organization.entity";
 import PlatformCustomerGroup from "../organization/platform/customer/customer_group.entity";
 import OrganizationCustomerGroup from "../organization/customer/customer_group.entity";
@@ -44,12 +44,15 @@ class Users {
   roles?: UserRoles[]
 
   @ManyToOne(() => PlatformCustomerGroup, { onDelete: "SET NULL" })
+  @JoinColumn()
   platformCustomerGroup?: PlatformCustomerGroup;
 
   @ManyToOne(() => OrganizationCustomerGroup, { onDelete: "SET NULL" })
+  @JoinColumn()
   customerGroup?: OrganizationCustomerGroup;
 
   @ManyToOne(() => Organization, { onDelete: "SET NULL" })
+  @JoinColumn()
   organization?: Organization;
 }
 
