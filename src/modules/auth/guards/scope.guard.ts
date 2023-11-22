@@ -1,9 +1,8 @@
-import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
-import { Reflector } from "@nestjs/core";
-import Scopes from "../decorators/scopes.decorator";
-import { minimatch } from "minimatch";
-import { AuthRequest } from "@/interface";
-
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
+import Scopes from '../decorators/scopes.decorator';
+import { minimatch } from 'minimatch';
+import { AuthRequest } from '@/interface';
 
 @Injectable()
 export class ScopesGuard implements CanActivate {
@@ -20,7 +19,7 @@ export class ScopesGuard implements CanActivate {
 
     for (const userScope of request.scopes) {
       for (let scope of scopes) {
-        scope = scope.replace("{ORG_SLUG}", request.organization?.slug);
+        scope = scope.replace('{ORG_SLUG}', request.organization?.slug);
         authorized = authorized || minimatch(scope, userScope);
         if (authorized) return true;
       }

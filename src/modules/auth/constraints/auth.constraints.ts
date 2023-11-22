@@ -1,7 +1,11 @@
-import { Inject, Injectable } from "@nestjs/common";
-import { ValidationArguments, ValidatorConstraint, ValidatorConstraintInterface } from "class-validator";
-import AuthService from "../auth.service";
-import TokenService from "../../../providers/token/token.service";
+import { Inject, Injectable } from '@nestjs/common';
+import {
+  ValidationArguments,
+  ValidatorConstraint,
+  ValidatorConstraintInterface,
+} from 'class-validator';
+import AuthService from '../auth.service';
+import TokenService from '../../../providers/token/token.service';
 
 ///Constraints ::::::
 @ValidatorConstraint({ name: 'UniqueEmail', async: true })
@@ -26,8 +30,13 @@ export class IsUniqueEmailRule implements ValidatorConstraintInterface {
 
 @ValidatorConstraint({ name: 'UniqueEmail', async: true })
 @Injectable()
-export class IsValidVerificationTokenRule implements ValidatorConstraintInterface {
-  constructor(private tokenService: TokenService, private authService: AuthService) {}
+export class IsValidVerificationTokenRule
+  implements ValidatorConstraintInterface
+{
+  constructor(
+    private tokenService: TokenService,
+    private authService: AuthService,
+  ) {}
 
   async validate(value: string, args: ValidationArguments) {
     try {
@@ -43,4 +52,3 @@ export class IsValidVerificationTokenRule implements ValidatorConstraintInterfac
     return `Invalid/expired verification code`;
   }
 }
-

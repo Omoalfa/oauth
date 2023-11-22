@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable } from '@nestjs/common';
 
 export interface EmployeeCtx {
   id: number;
@@ -9,10 +9,7 @@ export interface EmployeeCtx {
 
 @Injectable()
 class PlatformService {
-  constructor (
-    // @InjectRepository(Users) private readonly UserRepository: Repository<Users>,
-  ) {}
-
+  constructor() {} // @InjectRepository(Users) private readonly UserRepository: Repository<Users>,
 }
 
 export default PlatformService;

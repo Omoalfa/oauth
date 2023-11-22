@@ -1,10 +1,10 @@
-import { Module } from "@nestjs/common";
-import PlatformCustomerController from "./customer.controller";
-import PlaformCustomerService from "./customer.service";
+import { Module } from '@nestjs/common';
+import PlatformCustomerController from './customer.controller';
+import PlaformCustomerService from './customer.service';
 
 @Module({
   controllers: [PlatformCustomerController],
-  providers: [PlaformCustomerService]
+  providers: [PlaformCustomerService],
 })
 class PlatformCustomerModule {}
 

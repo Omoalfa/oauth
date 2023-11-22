@@ -1,6 +1,6 @@
-import { Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity("organization_customer_group")
+@Entity('organization_customer_group')
 class OrganizationCustomerGroup {
   @PrimaryGeneratedColumn()
   id: number;

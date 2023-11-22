@@ -1,15 +1,15 @@
-import { UserInviteDto } from "../../modules/organization/organization.dto";
-import { Injectable } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
-import { JwtService } from "@nestjs/jwt";
+import { UserInviteDto } from '../../modules/organization/organization.dto';
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 
 export interface DecodedToken {
-  sub: number,
+  sub: number;
   email: string;
   slug: string;
-  scopes?: string[],
-  company_id?: number,
-  company_user_id?: number,
+  scopes?: string[];
+  company_id?: number;
+  company_user_id?: number;
 }
 
 @Injectable()
@@ -19,46 +19,58 @@ class TokenService {
     private readonly jwtService: JwtService,
   ) {}
 
-  public sign (data: DecodedToken): string {
+  public sign(data: DecodedToken): string {
     const token = this.jwtService.sign(data, {
-      secret: this.configService.get<string>("jwt.secret"),
-      expiresIn: '1h'
-    })
+      secret: this.configService.get<string>('jwt.secret'),
+      expiresIn: '1h',
+    });
 
     return token;
   }
 
-  public verify (token: string): DecodedToken {
-    const decoded = this.jwtService.verify(token, { secret: this.configService.get<string>("jwt.secret") })
+  public verify(token: string): DecodedToken {
+    const decoded = this.jwtService.verify(token, {
+      secret: this.configService.get<string>('jwt.secret'),
+    });
     return decoded as DecodedToken;
   }
 
-  public generateInviteToken (data: UserInviteDto): string {
+  public generateInviteToken(data: UserInviteDto): string {
     const token = this.jwtService.sign(data, {
-      secret: this.configService.get<string>("jwt.auth_secret"),
-      expiresIn: '30d'
-    })
+      secret: this.configService.get<string>('jwt.auth_secret'),
+      expiresIn: '30d',
+    });
 
     return token;
   }
 
-  public decodeInviteToken (token: string): UserInviteDto {
-    const decoded = this.jwtService.verify(token, { secret: this.configService.get<string>("jwt.auth_secret") });
+  public decodeInviteToken(token: string): UserInviteDto {
+    const decoded = this.jwtService.verify(token, {
+      secret: this.configService.get<string>('jwt.auth_secret'),
+    });
     return decoded as UserInviteDto;
   }
 
-  public generateVerificationToken (data: { email: string, code: string }): string {
+  public generateVerificationToken(data: {
+    email: string;
+    code: string;
+  }): string {
     const token = this.jwtService.sign(data, {
-      secret: this.configService.get<string>("jwt.auth_secret"),
-      expiresIn: '30d'
-    })
+      secret: this.configService.get<string>('jwt.auth_secret'),
+      expiresIn: '30d',
+    });
 
     return token;
   }
 
-  public decodeVerificationToken (token: string): { email: string, code: string } {
-    const decoded = this.jwtService.verify(token, { secret: this.configService.get<string>("jwt.auth_secret") });
-    return decoded as { email: string, code: string };
+  public decodeVerificationToken(token: string): {
+    email: string;
+    code: string;
+  } {
+    const decoded = this.jwtService.verify(token, {
+      secret: this.configService.get<string>('jwt.auth_secret'),
+    });
+    return decoded as { email: string; code: string };
   }
 }
 

@@ -44,21 +44,15 @@ export const editorScopes: EScopes[] = [
   EScopes.SUDO_NEWSPAPER_CONTENT,
   EScopes.EDIT_NEWS_ARTICLE,
   EScopes.READ_NEWS_ARTICLE,
-  EScopes.READ_AD_CREATIVES
-]
+  EScopes.READ_AD_CREATIVES,
+];
 export const advertisingScopes: EScopes[] = [
   EScopes.READ_AD_SLOTS,
-  EScopes.SUDO_CAMPAIGN
-]
+  EScopes.SUDO_CAMPAIGN,
+];
 
-export const designScopes: EScopes[] = [
-  EScopes.SUDO_AD_CREATIVES
-]
+export const designScopes: EScopes[] = [EScopes.SUDO_AD_CREATIVES];
 
-export const financeScopes: EScopes[] = [
-  EScopes.READ_PAYMENT,
-]
+export const financeScopes: EScopes[] = [EScopes.READ_PAYMENT];
 
-export const adminScopes: EScopes[] = [
-  EScopes.SUDO
-]
+export const adminScopes: EScopes[] = [EScopes.SUDO];

@@ -1,32 +1,43 @@
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToMany, ManyToOne, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from "typeorm";
-import Organization from "../../modules/organization/organization.entity";
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToMany,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  Unique,
+  UpdateDateColumn,
+} from 'typeorm';
+import Organization from '../../modules/organization/organization.entity';
 
-@Entity("roles")
-@Unique("unique_title_per_owner", ["title", "owner"])
+@Entity('roles')
+@Unique('unique_title_per_owner', ['title', 'owner'])
 class Roles {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: "text", nullable: false })
+  @Column({ type: 'text', nullable: false })
   title: string;
 
-  @Column({ type: "text" })
-  scopes: string
+  @Column({ type: 'text' })
+  scopes: string;
 
-  @Column({ type: "boolean", default: false })
+  @Column({ type: 'boolean', default: false })
   isActive: boolean;
 
   @ManyToOne(() => Organization)
   @JoinColumn()
   owner: Organization;
 
-  @CreateDateColumn({ type: "timestamp" })
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
-  @UpdateDateColumn({ type: "timestamp" })
+  @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
 
-  @DeleteDateColumn({ type: "timestamp" })
+  @DeleteDateColumn({ type: 'timestamp' })
   deletedAt: Date;
 }
 

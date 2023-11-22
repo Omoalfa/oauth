@@ -1,7 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import AuthService from './auth.service';
 import Users, { EUserType } from './user.entity';
-import Organization, { EOrganizationType } from '../organization/organization.entity';
+import Organization, {
+  EOrganizationType,
+} from '../organization/organization.entity';
 import { UserSignupDto } from './auth.dto';
 import { TypeOrmModule, getRepositoryToken } from '@nestjs/typeorm';
 import UserRoles from './user_roles.entity';
@@ -28,35 +30,35 @@ describe('Auth Service', () => {
   let verificationToken: string;
 
   const mockUser: UserSignupDto = {
-    email: "engr.omoalfa@gmail.com",
-    password: "Ol@334_ejgiR",
-    name: "Omoalfa Dev"
-  }
+    email: 'engr.omoalfa@gmail.com',
+    password: 'Ol@334_ejgiR',
+    name: 'Omoalfa Dev',
+  };
 
-  let organizations: Organization[] = [
+  const organizations: Organization[] = [
     {
-      email: "admin@advertyzly.com",
-      slug: "platform",
-      name: "Advertyzly",
-      website: "advertyzly.com",
+      email: 'admin@advertyzly.com',
+      slug: 'platform',
+      name: 'Advertyzly',
+      website: 'advertyzly.com',
       type: EOrganizationType.PLATFORM,
       id: 1,
-    }
-  ]
+    },
+  ];
 
   beforeAll(async () => {
     const app: TestingModule = await Test.createTestingModule({
       imports: [
         ConfigModule.forRoot({
           load: [configFunction],
-          isGlobal: true
+          isGlobal: true,
         }),
         TypeOrmModule.forRootAsync({
           imports: [ConfigModule],
           inject: [ConfigService],
           useFactory(configService: ConfigService) {
-            const db = configService.get<DBConfig>("database");
-            
+            const db = configService.get<DBConfig>('database');
+
             return {
               type: 'postgres',
               host: db.host,
@@ -67,38 +69,43 @@ describe('Auth Service', () => {
               ssl: db.ssl,
               synchronize: true,
               entities: [
-                Users, 
+                Users,
                 Organization,
                 Tokens,
                 PlatformCustomerGroup,
                 OrganizationCustomerGroup,
                 Roles,
                 UserRoles,
-              ]
-            }
+              ],
+            };
           },
         }),
-        MailModule
+        MailModule,
       ],
-      providers: [AuthService, MockUserRepository, TokenService,
-        MailService, OrganizationService, JwtService,
+      providers: [
+        AuthService,
+        MockUserRepository,
+        TokenService,
+        MailService,
+        OrganizationService,
+        JwtService,
         {
           provide: getRepositoryToken(Users),
-          useClass: MockUserRepository
+          useClass: MockUserRepository,
         },
         {
           provide: getRepositoryToken(Organization),
-          useClass: OrganizationRepoMock
+          useClass: OrganizationRepoMock,
         },
         {
           provide: getRepositoryToken(UserRoles),
-          useValue: {}
-        }
+          useValue: {},
+        },
       ],
     })
-    .overrideProvider(MailService)
-    .useValue({ sendUserConfirmation: jest.fn() })
-    .compile()
+      .overrideProvider(MailService)
+      .useValue({ sendUserConfirmation: jest.fn() })
+      .compile();
 
     authService = app.get<AuthService>(AuthService);
     organizationService = app.get<OrganizationService>(OrganizationService);
@@ -106,38 +113,47 @@ describe('Auth Service', () => {
   });
 
   it('Should allow signup email and password', async () => {
-    const mockGenerateVerificationToken = jest.spyOn(tokenService, "generateVerificationToken")
+    const mockGenerateVerificationToken = jest.spyOn(
+      tokenService,
+      'generateVerificationToken',
+    );
 
-    await authService.localSignup("platform", mockUser);
+    await authService.localSignup('platform', mockUser);
 
-    const { code } = mockGenerateVerificationToken.mock.lastCall[0]
-    const data = mockGenerateVerificationToken.mock.results[0]
-    verificationToken = data.value
+    const { code } = mockGenerateVerificationToken.mock.lastCall[0];
+    const data = mockGenerateVerificationToken.mock.results[0];
+    verificationToken = data.value;
     verificationCode = code;
 
-    expect(mockGenerateVerificationToken).toHaveBeenCalledTimes(1)
+    expect(mockGenerateVerificationToken).toHaveBeenCalledTimes(1);
   });
 
-  it("Should validate user verification code", async () => {
-    const validVerificationCode = await authService.validateEmailAndCode(mockUser.email, verificationCode)
+  it('Should validate user verification code', async () => {
+    const validVerificationCode = await authService.validateEmailAndCode(
+      mockUser.email,
+      verificationCode,
+    );
 
     expect(validVerificationCode).toEqual(true);
-  })
+  });
 
-  it("Wrong verification code should return false!", async () => {
-    const validVerificationCode = await authService.validateEmailAndCode(mockUser.email, "123")
+  it('Wrong verification code should return false!', async () => {
+    const validVerificationCode = await authService.validateEmailAndCode(
+      mockUser.email,
+      '123',
+    );
 
     expect(validVerificationCode).toEqual(false);
-  })
+  });
 
-  it("Should verify user email", async () => {
-    const decodeVerificationTokenMock = jest.spyOn(tokenService, "decodeVerificationToken")
+  it('Should verify user email', async () => {
+    const decodeVerificationTokenMock = jest.spyOn(
+      tokenService,
+      'decodeVerificationToken',
+    );
 
     authService.verifyEmail(verificationToken);
 
-
     expect(decodeVerificationTokenMock).toBeCalledTimes(1);
-  })
-
-  
+  });
 });

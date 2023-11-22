@@ -1,5 +1,12 @@
-import { IsBoolean, IsEmail, IsInt, IsNotEmpty, IsString, IsUrl } from "class-validator";
-import { OrganizationExists, RoleExists } from "./organization.decorator";
+import {
+  IsBoolean,
+  IsEmail,
+  IsInt,
+  IsNotEmpty,
+  IsString,
+  IsUrl,
+} from 'class-validator';
+import { OrganizationExists, RoleExists } from './organization.decorator';
 
 export class CreateOrganizationDto {
   @IsString()

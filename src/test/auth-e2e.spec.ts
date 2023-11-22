@@ -1,16 +1,15 @@
-import { AppModule } from "../app.module";
-import MailService from "../providers/mail/mail.service";
-import { INestApplication } from "@nestjs/common";
-import { Test, TestingModule } from "@nestjs/testing";
-import * as request from "supertest";
-import { MailServiceMock } from "./helpers/mocks";
-import { UserSignupDto } from "../modules/auth/auth.dto";
-import { Repository } from "typeorm";
-import Users from "../modules/auth/user.entity";
-import { getRepositoryToken } from "@nestjs/typeorm";
+import { AppModule } from '../app.module';
+import MailService from '../providers/mail/mail.service';
+import { INestApplication } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+import * as request from 'supertest';
+import { MailServiceMock } from './helpers/mocks';
+import { UserSignupDto } from '../modules/auth/auth.dto';
+import { Repository } from 'typeorm';
+import Users from '../modules/auth/user.entity';
+import { getRepositoryToken } from '@nestjs/typeorm';
 
 describe('Auth (e2e)', () => {
-  
   // let app: INestApplication;
   // let userRepo: Repository<Users>;
 
@@ -35,7 +34,7 @@ describe('Auth (e2e)', () => {
   //   await app.close()
   // })
 
-  it("Should allow user register on the platform", async () => {
+  it('Should allow user register on the platform', async () => {
     // const sendUserConfirmationspy = jest.spyOn(MailServiceMock, "sendUserConfirmation");
 
     // const mockUser: UserSignupDto = {
@@ -55,6 +54,5 @@ describe('Auth (e2e)', () => {
     // // const url = call[2]
 
     expect(true).toEqual(true);
-  })
+  });
 });
-

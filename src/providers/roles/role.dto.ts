@@ -1,5 +1,11 @@
-import { IsArray, IsBoolean, IsEnum, IsNotEmpty, IsString } from "class-validator";
-import { EScopes } from "./scopes";
+import {
+  IsArray,
+  IsBoolean,
+  IsEnum,
+  IsNotEmpty,
+  IsString,
+} from 'class-validator';
+import { EScopes } from './scopes';
 
 export class CreateRoleDto {
   @IsString()
@@ -8,7 +14,7 @@ export class CreateRoleDto {
 
   @IsArray()
   @IsEnum(EScopes, { each: true })
-  scopes: EScopes[]
+  scopes: EScopes[];
 
   @IsBoolean()
   isActive: boolean;

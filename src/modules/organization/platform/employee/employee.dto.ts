@@ -1,5 +1,5 @@
-import { IsNotEmpty, IsString } from "class-validator";
-import { IsValidInvite } from "./employee.decorator";
+import { IsNotEmpty, IsString } from 'class-validator';
+import { IsValidInvite } from './employee.decorator';
 
 export class JoinCompanyDto {
   @IsString()

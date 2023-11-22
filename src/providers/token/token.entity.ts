@@ -1,27 +1,34 @@
-import Users from "../../modules/auth/user.entity";
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import Users from '../../modules/auth/user.entity';
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 class Tokens {
-  @PrimaryGeneratedColumn("increment")
+  @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @Column({ type: "text", nullable: false })
+  @Column({ type: 'text', nullable: false })
   refreshToken: string;
 
-  @Column({ type: "boolean" })
+  @Column({ type: 'boolean' })
   isValid: boolean;
 
-  @Column({ type: "timestamp" })
+  @Column({ type: 'timestamp' })
   expiresAt: Date;
 
   @ManyToOne(() => Users)
   user: Users;
 
-  @CreateDateColumn({ type: "timestamp" })
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
-  @DeleteDateColumn({ type: "timestamp" })
+  @DeleteDateColumn({ type: 'timestamp' })
   deletedAt: Date;
 }
 

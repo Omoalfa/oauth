@@ -31,7 +31,7 @@ class OrganizationService {
     value: string | number,
     field: 'name' | 'email' | 'website' | 'slug',
   ) => {
-    let query: any = {};
+    const query: any = {};
     query[field] = value;
 
     const organization = await this.organizationRepo.findOneBy(query);

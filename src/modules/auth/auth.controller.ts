@@ -42,7 +42,7 @@ export class GeneralAuthController {
 
       return await this.authService.login(valid.user, slug);
     } catch (error) {
-      throw new UnauthorizedException(401, error)
+      throw new UnauthorizedException(401, error);
     }
   }
 }
@@ -62,7 +62,6 @@ class AuthController {
   @Public()
   @ApiBody({ type: UserLoginDto })
   async LocalLogin(@Req() req: AuthRequest, @HostParam('slug') slug: string) {
-
     const authUser = await this.authService.validateUser(
       {
         email: req.user.email,

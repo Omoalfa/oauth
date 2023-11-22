@@ -28,14 +28,14 @@ import UserRoles from './modules/auth/user_roles.entity';
   imports: [
     ConfigModule.forRoot({
       load: [configFunction],
-      isGlobal: true
+      isGlobal: true,
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory(configService: ConfigService) {
-        const db = configService.get<DBConfig>("database");
-        
+        const db = configService.get<DBConfig>('database');
+
         return {
           type: 'postgres',
           host: db.host,
@@ -46,15 +46,15 @@ import UserRoles from './modules/auth/user_roles.entity';
           ssl: db.ssl,
           synchronize: true,
           entities: [
-            Users, 
+            Users,
             Organization,
             Tokens,
             PlatformCustomerGroup,
             OrganizationCustomerGroup,
             Roles,
-            UserRoles
-          ]
-        }
+            UserRoles,
+          ],
+        };
       },
     }),
     AuthModule,
@@ -64,7 +64,7 @@ import UserRoles from './modules/auth/user_roles.entity';
     PlatformEmployeesModule,
     OrganizationModule,
     OrganizationCustomerModule,
-    OrganizationEmployeesModule
+    OrganizationEmployeesModule,
   ],
   controllers: [AppController],
   providers: [
@@ -72,8 +72,8 @@ import UserRoles from './modules/auth/user_roles.entity';
     JwtStrategy,
     {
       provide: APP_GUARD,
-      useClass: JwtAuthGuard
-    }
-  ], 
+      useClass: JwtAuthGuard,
+    },
+  ],
 })
 export class AppModule {}

@@ -1,6 +1,5 @@
-import Users from "../../../../modules/auth/user.entity";
-import { DataService } from "../db.service";
-
+import Users from '../../../../modules/auth/user.entity';
+import { DataService } from '../db.service';
 
 export interface UserRepository {
   findAll(): Promise<Users[]>;
@@ -13,10 +12,10 @@ export interface UserRepository {
 
 // usersUsers.mock.repository.ts
 class MockUserRepository implements UserRepository {
-  constructor () {
-    this.dataService = new DataService()
+  constructor() {
+    this.dataService = new DataService();
 
-    this.users = this.dataService.getTable("users");
+    this.users = this.dataService.getTable('users');
   }
   private dataService: DataService;
   private users: Users[] = [];
@@ -29,15 +28,16 @@ class MockUserRepository implements UserRepository {
     const user = await this.findOneBy(filter);
 
     await this.save({
-      ...user, ...update
-    })
+      ...user,
+      ...update,
+    });
   }
 
   async findOneBy(data): Promise<Users | undefined> {
     return this.users.find((user) => {
       let isTrue = true;
 
-      for (let key in data) {
+      for (const key in data) {
         if (user[key] !== data[key]) {
           isTrue = isTrue && false;
         }
@@ -51,7 +51,7 @@ class MockUserRepository implements UserRepository {
     return this.users.find((user) => {
       let isTrue = true;
 
-      for (let key in data) {
+      for (const key in data) {
         if (user[key] !== data[key]) {
           isTrue = isTrue && false;
         }
@@ -75,7 +75,7 @@ class MockUserRepository implements UserRepository {
     } else if (user.id) {
       this.users.push(user);
     }
-    this.dataService.updateTable("users", this.users);
+    this.dataService.updateTable('users', this.users);
     return user;
   }
 
@@ -84,7 +84,7 @@ class MockUserRepository implements UserRepository {
     if (index >= 0) {
       this.users.splice(index, 1);
     }
-    this.dataService.updateTable("users", this.users);
+    this.dataService.updateTable('users', this.users);
   }
 }
 

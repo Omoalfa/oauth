@@ -3,7 +3,7 @@ import * as path from 'path';
 
 export class DataService {
   private data = {};
-  private filePath = path.join(__dirname, "data.json")
+  private filePath = path.join(__dirname, 'data.json');
 
   constructor() {
     this.loadDataFromFile();
@@ -21,7 +21,7 @@ export class DataService {
   getTable(column: string) {
     return this.data[column] || [];
   }
-  
+
   updateTable(column: string, user) {
     this.data[column] = user;
     this.saveDataToFile();
@@ -29,7 +29,11 @@ export class DataService {
 
   private saveDataToFile() {
     try {
-      fs.writeFileSync(this.filePath, JSON.stringify(this.data, null, 2), 'utf8');
+      fs.writeFileSync(
+        this.filePath,
+        JSON.stringify(this.data, null, 2),
+        'utf8',
+      );
     } catch (error) {
       console.error('Error saving data:', error);
     }

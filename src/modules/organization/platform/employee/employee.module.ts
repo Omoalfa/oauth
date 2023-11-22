@@ -1,15 +1,13 @@
-import { Module } from "@nestjs/common";
-import PlatformEmployeeServices from "./employee.service";
-import EmployeesController from "./employee.controller";
-import TokenModule from "../../../../providers/token/token.module";
+import { Module } from '@nestjs/common';
+import PlatformEmployeeServices from './employee.service';
+import EmployeesController from './employee.controller';
+import TokenModule from '../../../../providers/token/token.module';
 
 @Module({
-  imports: [
-    TokenModule
-  ],
+  imports: [TokenModule],
   providers: [PlatformEmployeeServices],
   controllers: [EmployeesController],
-  exports: [PlatformEmployeeServices]
+  exports: [PlatformEmployeeServices],
 })
 class PlatformEmployeesModule {}
 

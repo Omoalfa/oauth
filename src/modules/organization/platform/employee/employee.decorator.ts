@@ -1,6 +1,12 @@
-import { Injectable } from "@nestjs/common";
-import { ValidationArguments, ValidationOptions, ValidatorConstraint, ValidatorConstraintInterface, registerDecorator } from "class-validator";
-import TokenService from "../../../../providers/token/token.service";
+import { Injectable } from '@nestjs/common';
+import {
+  ValidationArguments,
+  ValidationOptions,
+  ValidatorConstraint,
+  ValidatorConstraintInterface,
+  registerDecorator,
+} from 'class-validator';
+import TokenService from '../../../../providers/token/token.service';
 
 @ValidatorConstraint({ name: 'UserExists', async: true })
 @Injectable()
@@ -9,7 +15,7 @@ class IsValidInviteRule implements ValidatorConstraintInterface {
 
   validate(value: string, args: ValidationArguments) {
     try {
-      const exist = this.tokenSevice.decodeInviteToken(value)
+      const exist = this.tokenSevice.decodeInviteToken(value);
 
       return !!exist;
     } catch (e) {
@@ -22,7 +28,10 @@ class IsValidInviteRule implements ValidatorConstraintInterface {
   }
 }
 
-export function IsValidInvite(property?: any, validationOptions?: ValidationOptions) {
+export function IsValidInvite(
+  property?: any,
+  validationOptions?: ValidationOptions,
+) {
   return function (object: Object, propertyName: string) {
     registerDecorator({
       name: 'companyExists',

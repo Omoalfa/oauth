@@ -1,6 +1,5 @@
-import Organization from "@/modules/organization/organization.entity";
-import { DataService } from "../db.service";
-
+import Organization from '@/modules/organization/organization.entity';
+import { DataService } from '../db.service';
 
 export interface OrganizationRepository {
   // findAll(): Promise<Organization[]>;
@@ -12,10 +11,10 @@ export interface OrganizationRepository {
 }
 
 class OrganizationRepoMock implements OrganizationRepository {
-  constructor () {
-    this.dataService = new DataService()
+  constructor() {
+    this.dataService = new DataService();
 
-    this.organizaitons = this.dataService.getTable("organizations");
+    this.organizaitons = this.dataService.getTable('organizations');
   }
   private dataService: DataService;
   private organizaitons: Organization[] = [];
@@ -24,7 +23,7 @@ class OrganizationRepoMock implements OrganizationRepository {
     return this.organizaitons.find((organization) => {
       let isTrue = true;
 
-      for (let key in data) {
+      for (const key in data) {
         if (organization[key] === data[key]) {
           isTrue = false;
         }

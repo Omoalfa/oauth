@@ -1,12 +1,18 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, Unique } from "typeorm";
-import Company from "./organization.entity";
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  Unique,
+} from 'typeorm';
+import Company from './organization.entity';
 
-@Entity("invitations")
+@Entity('invitations')
 class Invitations {
   @PrimaryGeneratedColumn()
-  id: Number;
+  id: number;
 
-  @Column({ type: "text", nullable: false })
+  @Column({ type: 'text', nullable: false })
   email: string;
 
   @ManyToOne(() => Company)

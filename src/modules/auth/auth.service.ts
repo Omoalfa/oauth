@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import TokenService, {
@@ -41,8 +45,11 @@ class AuthService {
   ): Promise<{ user: Users; organization: Organization }> => {
     try {
       const { email, name, avatar, password, id, slug } = data;
-      const organization = await this.organizationService.organizationExist(slug, 'slug');
-      console.log(organization, "queried organization table")
+      const organization = await this.organizationService.organizationExist(
+        slug,
+        'slug',
+      );
+      console.log(organization, 'queried organization table');
 
       if (type === 'local' && id) {
         const user = await this.userRepository.findOneBy({
@@ -82,7 +89,7 @@ class AuthService {
       }
       return null;
     } catch (error) {
-      throw new InternalServerErrorException()
+      throw new InternalServerErrorException();
     }
   };
 
@@ -95,7 +102,10 @@ class AuthService {
   public localSignup = async (slug: string, data: UserSignupDto) => {
     const { email, name, password: raw } = data;
 
-    const organization = await this.organizationService.organizationExist(slug, "slug");
+    const organization = await this.organizationService.organizationExist(
+      slug,
+      'slug',
+    );
 
     const password = bcrypt.hashSync(raw, this.salt);
     const verificationCode = nanoid(5);
