@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import AuthController, { GeneralAuthController } from './auth.controller';
 import AuthService from './auth.service';
 import Users, { EUserType } from './user.entity';
-import Organization, { EOrganizationType } from '../organization/organization.entity';
+import Organization, { EOrganizationType } from '../organization/organization.model';
 import { UserSignupDto } from './auth.dto';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import UserRoles from './user_roles.entity';

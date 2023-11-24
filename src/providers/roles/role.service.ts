@@ -1,34 +1,39 @@
 import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import Roles from "./role.entity";
-import { Repository } from "typeorm";
 import { CreateRoleDto } from "./role.dto";
-import Organization from "../../modules/organization/organization.entity";
 import { EScopes } from "./scopes";
+import PrismaService from "@/prisma/prisma.service";
+import { Organization, Role } from "@prisma/client";
 
 
 @Injectable()
 class RoleServies {
   constructor (
-    @InjectRepository(Roles) private readonly roleRepo: Repository<Roles>,
+    private readonly prismaService: PrismaService
   ) {}
 
-  public roleExists = async (id: number, organizationId: number): Promise<Roles> => {
-    return await this.roleRepo.findOneBy({ id, owner: { id: organizationId }});
+  public roleExists = async (id: number, organizationId: number): Promise<Role> => {
+    return await this.prismaService.role.findFirst({
+      where: { id, owner: { id: organizationId } }
+    })
   }
 
   public createRoles = async (organization: Organization, data: CreateRoleDto) => {
     const scopes = data.scopes.reduce((prev, cur) => prev + `:::${cur.replace("{ORG_SLUG}", organization.slug)}`, "")
     
-    const role = this.roleRepo.create({
-      title: data.title, scopes, owner: organization, isActive: data.isActive
+    await this.prismaService.role.create({
+      data: {
+        title: data.title, 
+        scopes, 
+        owner: { connect: organization }, 
+        isActive: data.isActive
+      }
     })
-
-    return await this.roleRepo.save(role);
   }
 
-  public getRoles = async () => {
-    const roles = await this.roleRepo.find();
+  public getRoles = async (owner: Organization): Promise<Role[]> => {
+    const roles = await this.prismaService.role.findMany({
+      where: { owner },
+    });
 
     return roles;
   }
@@ -42,11 +47,16 @@ class RoleServies {
   public addScope = async (org: Organization, id: number, data: Partial<CreateRoleDto>) => {
     const { scopes: raw } = data;
 
-    const role = await this.roleRepo.findOneBy({ id });
+    const role = await this.prismaService.role.findFirst({
+      where: { id }
+    });
 
     const scopes = raw.reduce((prev, cur) => prev + `:::${cur.replace("{ORG_SLUG}", org.slug)}`, role.scopes)
 
-    await this.roleRepo.update({ id }, { scopes });
+    await this.prismaService.role.update({
+      where: { id },
+      data: { scopes }
+    });
 
     return { ...role, scopes };
   }
@@ -54,7 +64,9 @@ class RoleServies {
   public removeScope = async (org: Organization, id: number, data: Partial<CreateRoleDto>) => {
     const { scopes: raw } = data;
 
-    const role = await this.roleRepo.findOneBy({ id });
+    const role = await this.prismaService.role.findFirst({
+      where: { id }
+    });
 
     const toRemoveScopes = raw.map(s => s.replace("{ORG_SLUG}", org.slug))
     const currentScopesArray = role.scopes.split(":::")
@@ -63,15 +75,23 @@ class RoleServies {
 
     const scopes = newScopesArray.reduce((prev, cur) => prev + `:::${cur.replace("{ORG_SLUG}", org.slug)}`, "")
 
-    await this.roleRepo.update({ id }, { scopes });
+    await this.prismaService.role.update({
+      where: { id },
+      data: { scopes }
+    });
 
     return { ...role, scopes };
   }
 
   public switchRoleActivOnOff = async (id: number) => {
-    const role = await this.roleRepo.findOneBy({ id });
+    const role = await this.prismaService.role.findFirst({
+      where: { id }
+    });
 
-    await this.roleRepo.update({ id }, { isActive: !role.isActive });
+    await this.prismaService.role.update({
+      where: { id },
+      data:  { isActive: !role.isActive }
+    });
 
     return { ...role, isActive: !role.isActive }
   }

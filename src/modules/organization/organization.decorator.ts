@@ -11,10 +11,16 @@ export class OrganizationExistsRule implements ValidatorConstraintInterface {
   async validate(value: string, args: ValidationArguments) {
     const { constraints } = args;
     try {
-      const exist = await this.organizationService.organizationExist(value, constraints[0].field);
-      console.log(exist);
+      const field = `${constraints[0].field}`;
 
-      return constraints[0].status && !!exist;
+      const exist = await this.organizationService.organizationExist(value, "slug");
+
+      const inBool = !!exist;
+
+      if (constraints[0].status) {
+        return inBool;
+      };
+      return !inBool;
     } catch (e) {
       return false;
     }
@@ -76,3 +82,4 @@ export function RoleExists (property?: any, validationOptions?: ValidationOption
     });
   };
 }
+

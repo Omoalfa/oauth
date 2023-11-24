@@ -7,21 +7,19 @@ import { join } from 'path';
 @Module({
   imports: [
     MailerModule.forRoot({
-      // transport: 'smtps://user@example.com:topsecret@smtp.example.com',
-      // or
       transport: {
-        host: process.env.EMAIL_HOST,
+        host: process.env.MAIL_HOST || "sandbox.smtp.mailtrap.io",
         secure: false,
         auth: {
-          user: process.env.MAIL_USER,
-          pass: process.env.MAIL_PASS,
+          user: process.env.MAIL_USER || "8fab621c0c38f8",
+          pass: process.env.MAIL_PASS || "adbfaccdb1f897",
         },
       },
       defaults: {
         from: '"No Reply" <noreply@example.com>',
       },
       template: {
-        dir: join(__dirname, 'templates'),
+        dir: join(__dirname, '../../../templates'),
         adapter: new HandlebarsAdapter(), // or new PugAdapter() or new EjsAdapter()
         options: {
           strict: true,

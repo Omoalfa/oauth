@@ -1,6 +1,4 @@
-import { Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import TokenService, {
   DecodedToken,
 } from '../../providers/token/token.service';
@@ -9,17 +7,14 @@ import { UserSignupDto } from './auth.dto';
 import { nanoid } from 'nanoid';
 import { ConfigService } from '@nestjs/config';
 import MailService from '../../providers/mail/mail.service';
-import Users, { EUserType } from './user.entity';
 import OrganizationService from '../organization/organization.service';
-import Organization from '../organization/organization.entity';
-import UserRoles from './user_roles.entity';
+import PrismaService from '@/prisma/prisma.service';
+import { Users } from '@prisma/client';
 
 @Injectable()
 class AuthService {
   constructor(
-    @InjectRepository(Users) private readonly userRepository: Repository<Users>,
-    @InjectRepository(UserRoles)
-    private readonly userRoleRepository: Repository<UserRoles>,
+    private readonly prismaService: PrismaService,
     private readonly tokenService: TokenService,
     private readonly mailerService: MailService,
     private readonly configService: ConfigService,
@@ -38,26 +33,26 @@ class AuthService {
       id?: number;
     },
     type: 'local' | 'google',
-  ): Promise<{ user: Users; organization: Organization }> => {
+  ) => {
     try {
       const { email, name, avatar, password, id, slug } = data;
       const organization = await this.organizationService.organizationExist(slug, 'slug');
-      console.log(organization, "queried organization table")
 
       if (type === 'local' && id) {
-        const user = await this.userRepository.findOneBy({
-          email,
-          id,
-          organization: { id: organization?.id },
-        });
+        const user = await this.prismaService.users.findFirst({
+          where: {
+            email, id, organizationId: organization.id
+          }
+        })
 
         return user ? { user, organization } : null;
       }
 
-      let user = await this.userRepository.findOneBy({
-        email,
-        organization: { id: organization?.id },
-      });
+      let user = await this.prismaService.users.findFirst({
+        where: {
+          email, organizationId: organization.id
+        }
+      })
 
       if (type === 'local' && password) {
         if (bcrypt.compareSync(password, user.password)) {
@@ -67,27 +62,38 @@ class AuthService {
 
       if (type === 'google') {
         if (user) return { user, organization };
-        const new_user = this.userRepository.create({
-          email,
-          name,
-          avatar,
-          isVerified: true,
-          type: EUserType.CUSTOMER,
-          organization,
+        const new_user = await this.prismaService.users.create({
+          data: {
+            email,
+            name,
+            avatar,
+            isVerified: true,
+            type: "CUSTOMER",
+            organization: {
+              connect: { id: organization.id }
+            },
+            username: `user_${nanoid(4)}`
+          }
         });
 
-        user = await this.userRepository.save(new_user);
-
-        return { user, organization };
+        return { user: new_user, organization };
       }
       return null;
     } catch (error) {
+      console.log(error);
       throw new InternalServerErrorException()
     }
   };
 
-  public isUniqueEmail = async (email: string): Promise<boolean> => {
-    const user = await this.userRepository.findOneBy({ email });
+  public isUniqueEmail = async (email: string, slug: string): Promise<boolean> => {
+    const user = await this.prismaService.users.findFirst({
+      where: {
+        email,
+        organization: {
+          slug
+        }
+      }
+    });
 
     return !!user;
   };
@@ -107,16 +113,20 @@ class AuthService {
 
     // const url = `${this.configService.get<string>('frontend.base_url')}/verify?token=${token}`;
 
-    const user = this.userRepository.create({
-      email,
-      name,
-      password,
-      verificationCode,
-      type: EUserType.CUSTOMER,
-      organization,
+    await this.prismaService.users.create({
+      data: {
+        email,
+        name,
+        password,
+        verificationCode,
+        type: "CUSTOMER",
+        isVerified: false,
+        username: `user_${nanoid(4)}`,
+        organization: {
+          connect: { id: organization.id }
+        },
+      }
     });
-
-    await this.userRepository.save(user);
 
     // await this.mailerService.sendUserConfirmation(email, name, url);
 
@@ -140,27 +150,40 @@ class AuthService {
   public validateEmailAndCode = async (
     email: string,
     verificationCode: string,
+    slug: string,
   ): Promise<boolean> => {
-    const user = await this.userRepository.findOneBy({
-      email,
-      verificationCode,
+    const user = await this.prismaService.users.findFirst({
+      where: {
+        email,
+        verificationCode,
+        organization: { slug }
+      }
     });
 
     return !!user;
   };
 
-  public verifyEmail = async (token: string) => {
+  public verifyEmail = async (token: string, slug: string) => {
     const { email } = this.tokenService.decodeVerificationToken(token);
 
-    await this.userRepository.update({ email }, { isVerified: true });
+    const organization = await this.organizationService.organizationExist(slug, "slug");
+
+    await this.prismaService.users.update({
+      where: { email_organizationId: {
+        email, organizationId: organization.id
+      }},
+      data: {
+        isVerified: true
+      }
+    });
 
     return;
   };
 
   public getUserRoles = async (id: number) => {
-    const roles = await this.userRoleRepository.find({
+    const roles = await this.prismaService.userRoles.findMany({
       where: { user: { id } },
-      relations: { role: true },
+      include: { role: true }
     });
 
     return roles;

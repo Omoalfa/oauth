@@ -1,31 +1,11 @@
 import { IsBoolean, IsEmail, IsInt, IsNotEmpty, IsString, IsUrl } from "class-validator";
-import { OrganizationExists, RoleExists } from "./organization.decorator";
-
-export class CreateOrganizationDto {
-  @IsString()
-  @IsNotEmpty()
-  @OrganizationExists({ field: 'name', state: false })
-  name: string;
-
-  @IsString()
-  @IsEmail()
-  @OrganizationExists({ field: 'email', state: false })
-  email: string;
-
-  @IsString()
-  @IsUrl()
-  @OrganizationExists({ field: 'website', state: false })
-  website: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @OrganizationExists({ field: 'slug', state: false })
-  slug: string;
-}
+import { RoleExists } from "./organization.decorator";
+import { IsUniqueEmail } from "../auth/decorators/auth.decorator";
 
 export class UserInviteDto {
   @IsString()
   @IsEmail()
+  @IsUniqueEmail()
   email: string;
 
   @IsString()
@@ -38,8 +18,4 @@ export class UserInviteDto {
   @IsInt()
   @RoleExists()
   roleId: number;
-
-  @IsInt()
-  @OrganizationExists({ field: 'id', state: true })
-  id: number;
 }

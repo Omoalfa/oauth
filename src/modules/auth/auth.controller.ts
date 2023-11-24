@@ -16,8 +16,8 @@ import { AuthRequest } from '@/interface';
 import LocalGuard from './guards/local.guard';
 import { UserLoginDto, UserSignupDto, VerifyEmailDto } from './auth.dto';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
-import Users from './user.entity';
 import { Request } from 'express';
+import { Users } from '@prisma/client';
 
 @Controller('/auth')
 export class GeneralAuthController {
@@ -65,8 +65,8 @@ class AuthController {
 
     const authUser = await this.authService.validateUser(
       {
-        email: req.user.email,
-        password: req.user.password,
+        email: req.user.user.email,
+        password: req.user.user.password,
         slug,
       },
       'local',
@@ -95,8 +95,11 @@ class AuthController {
 
   @Post('email')
   @Public()
-  async VerifyEmail(@Query() data: VerifyEmailDto) {
-    await this.authService.verifyEmail(data.token);
+  async VerifyEmail(
+    @Query() data: VerifyEmailDto, 
+    @HostParam("slug") slug: string
+  ) {
+    await this.authService.verifyEmail(data.token, slug);
 
     return { message: 'Your account is now successfully activated!' };
   }

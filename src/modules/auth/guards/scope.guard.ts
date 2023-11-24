@@ -18,9 +18,9 @@ export class ScopesGuard implements CanActivate {
 
     if (!user) return false;
 
-    for (const userScope of request.scopes) {
+    for (const userScope of request.user.scopes) {
       for (let scope of scopes) {
-        scope = scope.replace("{ORG_SLUG}", request.organization?.slug);
+        scope = scope.replace("{ORG_SLUG}", request.user.organization?.slug);
         authorized = authorized || minimatch(scope, userScope);
         if (authorized) return true;
       }

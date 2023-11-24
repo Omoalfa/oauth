@@ -1,5 +1,4 @@
 import ConfigVars from '@/config/interface';
-import Invitations from '@/modules/organization/invitation.entity';
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';

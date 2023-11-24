@@ -30,7 +30,7 @@ class JwtStrategy extends PassportStrategy(AuthStrategy) {
 
         if (!data.user) return this.fail('Unauthorized request', 401);
 
-        const scopes = this.fetchUserScopes(data.user.id);
+        const scopes = await this.fetchUserScopes(data.user.id);
 
         return this.success({
           ...data,

@@ -1,0 +1,102 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Users {
+  id                      Int                       @id @default(autoincrement())
+  email                   String 
+  name                    String
+  avatar                  String?
+  password                String?
+  verificationCode        String?
+  isVerified              Boolean
+  username                String
+  type                    UserType
+  roles                   UserRoles[]
+  platformCustomerGroup   PlatformCustomerGroup?      @relation(fields: [platformCustomerGroupId], references: [id])
+  platformCustomerGroupId Int?
+  customerGroup           OrganizationCustomerGroup?  @relation(fields: [customerGroupId], references: [id])
+  customerGroupId         Int?
+  organization            Organization?               @relation(fields: [organizationId], references: [id])
+  ownedOrganizations      Organization[]              @relation(name: "owned_organization")
+  organizationId          Int?
+  createdAt               DateTime                    @default(now())
+  updatedAt               DateTime                    @updatedAt
+  tokens                  Tokens[]
+  @@unique([email, organizationId])
+  @@unique([username, organizationId])
+}
+
+model Role {
+  id            Int             @id @default(autoincrement())
+  title         String
+  isActive      Boolean         @default(true)
+  scopes        String
+  owner         Organization    @relation(fields: [ownerId], references: [id])
+  users         UserRoles[]
+  ownerId       Int     
+  createdAt     DateTime        @default(now())        
+}
+
+model UserRoles {
+  id        Int     @id @default(autoincrement())
+  role      Role    @relation(fields: [roleId], references: [id])
+  roleId    Int     
+  user      Users   @relation(fields: [userId], references: [id])
+  userId    Int
+}
+
+model PlatformCustomerGroup {
+  id Int @id @default(autoincrement())
+  users Users[]
+}
+
+model OrganizationCustomerGroup {
+  id Int @id @default(autoincrement())
+  users Users[]
+}
+
+model Organization {
+  id          Int               @id @default(autoincrement())
+  email       String            @unique
+  website     String            @unique
+  name        String
+  slug        String            @unique
+  type        OrganizationType
+  owner       Users             @relation(fields: [ownerId], references: [id], name: "owned_organization")
+  ownerId     Int
+  users       Users[]
+  roles       Role[]
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+}
+
+model Tokens {
+  id            Int             @id @default(autoincrement())
+  refreshToken  String          
+  isValid       Boolean
+  expiresAt     DateTime
+  user          Users           @relation(fields: [userId], references: [id])
+  userId        Int
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+}
+
+enum UserType {
+  CUSTOMER
+  EMPLOYEE
+}
+
+enum OrganizationType {
+  PLATFORM
+  CLIENT
+}
+
